@@ -2367,8 +2367,8 @@ namespace TeddyBench
             // get an XGraphics object for drawing
             XGraphics gfx = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
 
-            int tagColumn = 0;
-            int tagRow = 0;
+            int tagColumn = Settings.CustomTagCoverInitialColumn;
+            int tagRow = Settings.CustomTagCoverInitialRow;
 
             // loop over all selected objects
             foreach (ListViewItem item in lstTonies.SelectedItems)
@@ -2409,7 +2409,10 @@ namespace TeddyBench
                 DrawImageScaled(gfx, img, new Point(Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX), Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY)), new Size(Settings.CustomTagCoverSize, Settings.CustomTagCoverSize));
 
                 // draw rectangle
-                DrawEllipse(gfx, 0.5, new Point(Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX), Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY)), new Size(Settings.CustomTagCoverSize, Settings.CustomTagCoverSize));
+                if (Settings.CustomTagOutlineWidth > 0)
+                {
+                    DrawEllipse(gfx, Settings.CustomTagOutlineWidth, new Point(Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX), Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY)), new Size(Settings.CustomTagCoverSize, Settings.CustomTagCoverSize));
+                }
 
                 // increase local offset for next tag
                 tagColumn++;

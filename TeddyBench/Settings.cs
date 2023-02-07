@@ -18,7 +18,10 @@ namespace TeddyBench
         public int CustomTagCoverNonPrintableMargin = 15;
         public int CustomTagCoverOffsetIncrementX = 45;
         public int CustomTagCoverOffsetIncrementY = 45;
+        public int CustomTagCoverInitialColumn = 0;
+        public int CustomTagCoverInitialRow = 0;
         public int CustomTagCoverSize = 40;
+        public double CustomTagOutlineWidth = 0.5;
         public string CustomTagCoverFilename = "CustomTagCover.pdf";
 
         public static Settings FromFile(string file)
