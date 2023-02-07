@@ -48,6 +48,8 @@
             this.flashFirmwareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flashBootloaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consoleModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createTagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -82,8 +84,8 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTooggToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sendDiagnosticsReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sendDiagnosticsReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.grpCardContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -104,6 +106,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.nFCReaderToolStripMenuItem,
+            this.tagsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -213,6 +216,21 @@
             this.consoleModeToolStripMenuItem.Text = "Console mode (experts only)";
             this.consoleModeToolStripMenuItem.Click += new System.EventHandler(this.consoleModeToolStripMenuItem_Click);
             // 
+            // tagsToolStripMenuItem
+            // 
+            this.tagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createTagToolStripMenuItem});
+            this.tagsToolStripMenuItem.Name = "tagsToolStripMenuItem";
+            this.tagsToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.tagsToolStripMenuItem.Text = "Custom tag";
+            // 
+            // createTagToolStripMenuItem
+            // 
+            this.createTagToolStripMenuItem.Name = "createTagToolStripMenuItem";
+            this.createTagToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createTagToolStripMenuItem.Text = "Create tag cover";
+            this.createTagToolStripMenuItem.Click += new System.EventHandler(this.createCustomTagImageToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -316,7 +334,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.btnDelete);
             this.splitContainer1.Panel2.Controls.Add(this.btnAdd);
             this.splitContainer1.Size = new System.Drawing.Size(788, 401);
-            this.splitContainer1.SplitterDistance = 675;
+            this.splitContainer1.SplitterDistance = 684;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -340,7 +358,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.lstTonies);
-            this.splitContainer2.Size = new System.Drawing.Size(675, 401);
+            this.splitContainer2.Size = new System.Drawing.Size(684, 401);
             this.splitContainer2.SplitterDistance = 36;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 1;
@@ -422,7 +440,7 @@
             this.lstTonies.Location = new System.Drawing.Point(0, 0);
             this.lstTonies.Name = "lstTonies";
             this.lstTonies.ShowItemToolTips = true;
-            this.lstTonies.Size = new System.Drawing.Size(675, 364);
+            this.lstTonies.Size = new System.Drawing.Size(684, 364);
             this.lstTonies.TabIndex = 0;
             this.lstTonies.TileSize = new System.Drawing.Size(64, 64);
             this.lstTonies.UseCompatibleStateImageBehavior = false;
@@ -518,7 +536,7 @@
             this.exportToToolStripMenuItem,
             this.sendDiagnosticsReportToolStripMenuItem});
             this.TonieContextMenu.Name = "contextMenuStrip1";
-            this.TonieContextMenu.Size = new System.Drawing.Size(199, 208);
+            this.TonieContextMenu.Size = new System.Drawing.Size(199, 186);
             // 
             // toggleLiveFlagToolStripMenuItem
             // 
@@ -567,19 +585,19 @@
             this.exportTooggToolStripMenuItem.Text = "Export to .ogg";
             this.exportTooggToolStripMenuItem.Click += new System.EventHandler(this.exportTooggToolStripMenuItem_Click);
             // 
-            // sendDiagnosticsReportToolStripMenuItem
-            // 
-            this.sendDiagnosticsReportToolStripMenuItem.Name = "sendDiagnosticsReportToolStripMenuItem";
-            this.sendDiagnosticsReportToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.sendDiagnosticsReportToolStripMenuItem.Text = "Send diagnostics report";
-            this.sendDiagnosticsReportToolStripMenuItem.Click += new System.EventHandler(this.sendDiagnosticsReportToolStripMenuItem_Click);
-            // 
             // exportToToolStripMenuItem
             // 
             this.exportToToolStripMenuItem.Name = "exportToToolStripMenuItem";
             this.exportToToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.exportToToolStripMenuItem.Text = "Export to...";
             this.exportToToolStripMenuItem.Click += new System.EventHandler(this.exportToToolStripMenuItem_Click);
+            // 
+            // sendDiagnosticsReportToolStripMenuItem
+            // 
+            this.sendDiagnosticsReportToolStripMenuItem.Name = "sendDiagnosticsReportToolStripMenuItem";
+            this.sendDiagnosticsReportToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.sendDiagnosticsReportToolStripMenuItem.Text = "Send diagnostics report";
+            this.sendDiagnosticsReportToolStripMenuItem.Click += new System.EventHandler(this.sendDiagnosticsReportToolStripMenuItem_Click);
             // 
             // TeddyMain
             // 
@@ -668,6 +686,8 @@
         private System.Windows.Forms.ToolStripMenuItem reportNFCTagToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toggleLiveFlagToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tagsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createTagToolStripMenuItem;
     }
 }
 

@@ -13,6 +13,13 @@ namespace TeddyBench
         public string Username = "";
         public bool NfcEnabled = false;
         public bool DebugWindow = false;
+        public int CacheImageSize = 256;
+
+        public int CustomTagCoverNonPrintableMargin = 15;
+        public int CustomTagCoverOffsetIncrementX = 45;
+        public int CustomTagCoverOffsetIncrementY = 45;
+        public int CustomTagCoverSize = 40;
+        public string CustomTagCoverFilename = "CustomTagCover.pdf";
 
         public static Settings FromFile(string file)
         {

@@ -1,6 +1,8 @@
 ﻿using NAudio.Wave;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,6 +25,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TeddyBench.Properties;
 using TonieFile;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Application = System.Windows.Forms.Application;
 
 namespace TeddyBench
@@ -947,8 +950,23 @@ namespace TeddyBench
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pic);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Image img = ResizeImage(Image.FromStream(response.GetResponseStream()), 128, 128);
 
+                Image img;
+
+                
+                Image originalImage = Image.FromStream(response.GetResponseStream());
+
+                if (originalImage.Height > originalImage.Width)
+                {
+                    originalImage = CropCenterOfImage(originalImage, new Size(originalImage.Width, originalImage.Width));
+                }
+                else
+                {
+                    originalImage = CropCenterOfImage(originalImage, new Size(originalImage.Height, originalImage.Height));
+                }
+
+                img = ResizeImage(originalImage, Settings.CacheImageSize, Settings.CacheImageSize);  
+                
                 try
                 {
                     img.Save(cacheFileName);
@@ -2328,6 +2346,140 @@ namespace TeddyBench
                     MessageBox.Show("Error sending the report", "Report failure");
                 }
             }
+        }
+
+        private void createCustomTagImageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+
+            if (dlg.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            string outputLocation = dlg.SelectedPath;
+
+            // create a new PDF document
+            PdfDocument document = new PdfDocument();
+
+            // Create an empty page
+            PdfPage page = document.AddPage();
+
+            // get an XGraphics object for drawing
+            XGraphics gfx = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
+
+            int tagColumn = 0;
+            int tagRow = 0;
+
+            // loop over all selected objects
+            foreach (ListViewItem item in lstTonies.SelectedItems)
+            {
+                // get infos
+                ListViewTag tag = item.Tag as ListViewTag;
+                string current = item.Text;
+
+                // check if we have valid tag for the image
+                if (tag.Info == null || tag.Info.Hash == null)
+                {
+                    continue;
+                }
+
+                // check if we need to start a new row
+                if ((Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX) + Settings.CustomTagCoverSize + Settings.CustomTagCoverNonPrintableMargin) > page.Width.Millimeter)
+                {
+                    tagColumn = 0;
+                    tagRow++;
+                }
+
+                // check if we need to add a new page
+                if ((Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY) + Settings.CustomTagCoverSize + Settings.CustomTagCoverNonPrintableMargin) > page.Height.Millimeter)
+                {
+                    // add new page
+                    page = document.AddPage();
+
+                    // get graphics object
+                    gfx = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
+
+                    // reset row and column
+                    tagColumn = 0;
+                    tagRow = 0;
+                }
+
+                // insert image
+                Image img = GetImage(tag.Info.Pic, tag.Info.Hash[0]);
+                DrawImageScaled(gfx, img, new Point(Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX), Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY)), new Size(Settings.CustomTagCoverSize, Settings.CustomTagCoverSize));
+
+                // draw rectangle
+                DrawEllipse(gfx, 0.5, new Point(Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX), Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY)), new Size(Settings.CustomTagCoverSize, Settings.CustomTagCoverSize));
+
+                // increase local offset for next tag
+                tagColumn++;
+            }
+
+            // save the document
+            String filename = Path.Combine(outputLocation, Settings.CustomTagCoverFilename);
+            document.Save(filename);
+
+            // start a viewer.
+            Process.Start(filename);
+        }
+
+        private Image CropCenterOfImage(Image imgToResize, Size destinationSize)
+        {
+            var originalWidth = imgToResize.Width;
+            var originalHeight = imgToResize.Height;
+
+            //how many units are there to make the original length
+            var hRatio = (float)originalHeight / destinationSize.Height;
+            var wRatio = (float)originalWidth / destinationSize.Width;
+
+            //get the shorter side
+            var ratio = Math.Min(hRatio, wRatio);
+
+            var hScale = Convert.ToInt32(destinationSize.Height * ratio);
+            var wScale = Convert.ToInt32(destinationSize.Width * ratio);
+
+            //start cropping from the center
+            var startX = (originalWidth - wScale) / 2;
+            var startY = (originalHeight - hScale) / 2;
+
+            //crop the image from the specified location and size
+            var sourceRectangle = new Rectangle(startX, startY, wScale, hScale);
+
+            //the future size of the image
+            var bitmap = new Bitmap(destinationSize.Width, destinationSize.Height);
+
+            //fill-in the whole bitmap
+            var destinationRectangle = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+
+            //generate the new image
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(imgToResize, destinationRectangle, sourceRectangle, GraphicsUnit.Pixel);
+            }
+
+            return bitmap;
+
+        }
+
+        private void DrawEllipse(XGraphics gfx, double lineWidth, Point upperLeftCorner, Size size)
+        {
+            XPen pen = new XPen(XColors.DarkBlue, lineWidth);
+            gfx.DrawEllipse(pen, upperLeftCorner.X, upperLeftCorner.Y, size.Width, size.Height);
+        }
+
+        private void DrawImageScaled(XGraphics gfx, String filename, Point upperLeftCorner, Size size)
+        {
+            XImage image = XImage.FromFile(filename);
+            gfx.DrawImage(image, upperLeftCorner.X, upperLeftCorner.Y, size.Width, size.Height);
+        }
+
+        private void DrawImageScaled(XGraphics gfx, Image img, Point upperLeftCorner, Size size)
+        {
+            MemoryStream strm = new MemoryStream();
+            img.Save(strm, System.Drawing.Imaging.ImageFormat.Png);
+            XImage image = XImage.FromStream(strm);
+            gfx.DrawImage(image, upperLeftCorner.X, upperLeftCorner.Y, size.Width, size.Height);
         }
     }
 }
