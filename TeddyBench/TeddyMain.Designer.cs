@@ -86,6 +86,7 @@
             this.exportTooggToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendDiagnosticsReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createTagBacksideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.grpCardContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -219,7 +220,8 @@
             // tagsToolStripMenuItem
             // 
             this.tagsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.createTagToolStripMenuItem});
+            this.createTagToolStripMenuItem,
+            this.createTagBacksideToolStripMenuItem});
             this.tagsToolStripMenuItem.Name = "tagsToolStripMenuItem";
             this.tagsToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
             this.tagsToolStripMenuItem.Text = "Custom tag";
@@ -334,7 +336,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.btnDelete);
             this.splitContainer1.Panel2.Controls.Add(this.btnAdd);
             this.splitContainer1.Size = new System.Drawing.Size(788, 401);
-            this.splitContainer1.SplitterDistance = 684;
+            this.splitContainer1.SplitterDistance = 687;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -358,7 +360,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.lstTonies);
-            this.splitContainer2.Size = new System.Drawing.Size(684, 401);
+            this.splitContainer2.Size = new System.Drawing.Size(687, 401);
             this.splitContainer2.SplitterDistance = 36;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 1;
@@ -440,7 +442,7 @@
             this.lstTonies.Location = new System.Drawing.Point(0, 0);
             this.lstTonies.Name = "lstTonies";
             this.lstTonies.ShowItemToolTips = true;
-            this.lstTonies.Size = new System.Drawing.Size(684, 364);
+            this.lstTonies.Size = new System.Drawing.Size(687, 364);
             this.lstTonies.TabIndex = 0;
             this.lstTonies.TileSize = new System.Drawing.Size(64, 64);
             this.lstTonies.UseCompatibleStateImageBehavior = false;
@@ -599,6 +601,13 @@
             this.sendDiagnosticsReportToolStripMenuItem.Text = "Send diagnostics report";
             this.sendDiagnosticsReportToolStripMenuItem.Click += new System.EventHandler(this.sendDiagnosticsReportToolStripMenuItem_Click);
             // 
+            // createTagBacksideToolStripMenuItem
+            // 
+            this.createTagBacksideToolStripMenuItem.Name = "createTagBacksideToolStripMenuItem";
+            this.createTagBacksideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createTagBacksideToolStripMenuItem.Text = "Create tag backside";
+            this.createTagBacksideToolStripMenuItem.Click += new System.EventHandler(this.createTagBacksideToolStripMenuItem_Click);
+            // 
             // TeddyMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -688,6 +697,7 @@
         private System.Windows.Forms.ToolStripMenuItem exportToToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tagsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createTagToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createTagBacksideToolStripMenuItem;
     }
 }
 

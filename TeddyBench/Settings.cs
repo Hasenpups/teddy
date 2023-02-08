@@ -15,14 +15,15 @@ namespace TeddyBench
         public bool DebugWindow = false;
         public int CacheImageSize = 256;
 
-        public int CustomTagCoverNonPrintableMargin = 15;
-        public int CustomTagCoverOffsetIncrementX = 45;
-        public int CustomTagCoverOffsetIncrementY = 45;
-        public int CustomTagCoverInitialColumn = 0;
-        public int CustomTagCoverInitialRow = 0;
-        public int CustomTagCoverSize = 40;
+        public int CustomTagNonPrintableMargin = 15;
+        public int CustomTagGapX = 5;
+        public int CustomTagGapY = 5;
+        public int CustomTagInitialColumn = 0;
+        public int CustomTagInitialRow = 0;
+        public int CustomTagSize = 40;
         public double CustomTagOutlineWidth = 0.5;
         public string CustomTagCoverFilename = "CustomTagCover.pdf";
+        public string CustomTagBacksideFilename = "CustomTagBackside.pdf";
 
         public static Settings FromFile(string file)
         {

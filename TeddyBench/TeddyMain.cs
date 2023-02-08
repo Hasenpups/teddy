@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PdfSharp.Drawing;
+using PdfSharp.Drawing.Layout;
 using PdfSharp.Pdf;
 using System;
 using System.Collections;
@@ -2367,8 +2368,10 @@ namespace TeddyBench
             // get an XGraphics object for drawing
             XGraphics gfx = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
 
-            int tagColumn = Settings.CustomTagCoverInitialColumn;
-            int tagRow = Settings.CustomTagCoverInitialRow;
+            int tagColumn = Settings.CustomTagInitialColumn;
+            int tagRow = Settings.CustomTagInitialRow;
+            int offsetIncrementX = Settings.CustomTagSize + Settings.CustomTagGapX;
+            int offsetIncrementY = Settings.CustomTagSize + Settings.CustomTagGapY;
 
             // loop over all selected objects
             foreach (ListViewItem item in lstTonies.SelectedItems)
@@ -2383,15 +2386,21 @@ namespace TeddyBench
                     continue;
                 }
 
+                // calculate new upper left corner
+                Point upperLeftCorner = new Point(Settings.CustomTagNonPrintableMargin + (tagColumn * offsetIncrementX), Settings.CustomTagNonPrintableMargin + (tagRow * offsetIncrementY));
+
                 // check if we need to start a new row
-                if ((Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX) + Settings.CustomTagCoverSize + Settings.CustomTagCoverNonPrintableMargin) > page.Width.Millimeter)
+                if ((upperLeftCorner.X + Settings.CustomTagSize + Settings.CustomTagNonPrintableMargin) > page.Width.Millimeter)
                 {
                     tagColumn = 0;
                     tagRow++;
+
+                    // recalculate the upper left corner
+                    upperLeftCorner = new Point(Settings.CustomTagNonPrintableMargin + (tagColumn * offsetIncrementX), Settings.CustomTagNonPrintableMargin + (tagRow * offsetIncrementY));
                 }
 
                 // check if we need to add a new page
-                if ((Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY) + Settings.CustomTagCoverSize + Settings.CustomTagCoverNonPrintableMargin) > page.Height.Millimeter)
+                if ((upperLeftCorner.Y + Settings.CustomTagSize + Settings.CustomTagNonPrintableMargin) > page.Height.Millimeter)
                 {
                     // add new page
                     page = document.AddPage();
@@ -2402,16 +2411,19 @@ namespace TeddyBench
                     // reset row and column
                     tagColumn = 0;
                     tagRow = 0;
+
+                    // recalculate the upper left corner
+                    upperLeftCorner = new Point(Settings.CustomTagNonPrintableMargin + (tagColumn * offsetIncrementX), Settings.CustomTagNonPrintableMargin + (tagRow * offsetIncrementY));
                 }
 
                 // insert image
                 Image img = GetImage(tag.Info.Pic, tag.Info.Hash[0]);
-                DrawImageScaled(gfx, img, new Point(Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX), Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY)), new Size(Settings.CustomTagCoverSize, Settings.CustomTagCoverSize));
+                DrawImageScaled(gfx, img, new Point(upperLeftCorner.X, upperLeftCorner.Y), new Size(Settings.CustomTagSize, Settings.CustomTagSize));
 
                 // draw rectangle
                 if (Settings.CustomTagOutlineWidth > 0)
                 {
-                    DrawEllipse(gfx, Settings.CustomTagOutlineWidth, new Point(Settings.CustomTagCoverNonPrintableMargin + (tagColumn * Settings.CustomTagCoverOffsetIncrementX), Settings.CustomTagCoverNonPrintableMargin + (tagRow * Settings.CustomTagCoverOffsetIncrementY)), new Size(Settings.CustomTagCoverSize, Settings.CustomTagCoverSize));
+                    DrawEllipse(gfx, Settings.CustomTagOutlineWidth, new Point(upperLeftCorner.X, upperLeftCorner.Y), new Size(Settings.CustomTagSize, Settings.CustomTagSize));
                 }
 
                 // increase local offset for next tag
@@ -2483,6 +2495,105 @@ namespace TeddyBench
             img.Save(strm, System.Drawing.Imaging.ImageFormat.Png);
             XImage image = XImage.FromStream(strm);
             gfx.DrawImage(image, upperLeftCorner.X, upperLeftCorner.Y, size.Width, size.Height);
+        }
+
+        private void createTagBacksideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+
+            if (dlg.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            string outputLocation = dlg.SelectedPath;
+
+            // create a new PDF document
+            PdfDocument document = new PdfDocument();
+
+            // Create an empty page
+            PdfPage page = document.AddPage();
+
+            // get an XGraphics object for drawing
+            XGraphics gfx = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
+
+            int tagColumn = Settings.CustomTagInitialColumn;
+            int tagRow = Settings.CustomTagInitialRow;
+            int offsetIncrementX = Settings.CustomTagSize + Settings.CustomTagGapX;
+            int offsetIncrementY = Settings.CustomTagSize + Settings.CustomTagGapY;
+
+            // loop over all selected objects
+            foreach (ListViewItem item in lstTonies.SelectedItems)
+            {
+                // get infos
+                ListViewTag tag = item.Tag as ListViewTag;
+                string current = item.Text;
+
+                // check if we have valid tag for the image
+                if (tag.Info == null || tag.Info.Hash == null)
+                {
+                    continue;
+                }
+
+                // calculate new upper left corner
+                Point upperLeftCorner = new Point(Settings.CustomTagNonPrintableMargin + (tagColumn * offsetIncrementX), Settings.CustomTagNonPrintableMargin + (tagRow * offsetIncrementY));
+
+                // check if we need to start a new row
+                if ((upperLeftCorner.X + Settings.CustomTagSize + Settings.CustomTagNonPrintableMargin) > page.Width.Millimeter)
+                {
+                    tagColumn = 0;
+                    tagRow++;
+
+                    // recalculate the upper left corner
+                    upperLeftCorner = new Point(Settings.CustomTagNonPrintableMargin + (tagColumn * offsetIncrementX), Settings.CustomTagNonPrintableMargin + (tagRow * offsetIncrementY));
+                }
+
+                // check if we need to add a new page
+                if ((upperLeftCorner.Y + Settings.CustomTagSize + Settings.CustomTagNonPrintableMargin) > page.Height.Millimeter)
+                {
+                    // add new page
+                    page = document.AddPage();
+
+                    // get graphics object
+                    gfx = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
+
+                    // reset row and column
+                    tagColumn = 0;
+                    tagRow = 0;
+
+                    // recalculate the upper left corner
+                    upperLeftCorner = new Point(Settings.CustomTagNonPrintableMargin + (tagColumn * offsetIncrementX), Settings.CustomTagNonPrintableMargin + (tagRow * offsetIncrementY));
+                }
+
+                // draw rectangle
+                if (Settings.CustomTagOutlineWidth > 0)
+                {
+                    DrawEllipse(gfx, Settings.CustomTagOutlineWidth, new Point(upperLeftCorner.X, upperLeftCorner.Y), new Size(Settings.CustomTagSize, Settings.CustomTagSize));
+                }
+
+                // model ID
+                XTextFormatter tf = new XTextFormatter(gfx);
+
+                XFont font = new XFont("Times New Roman", 3, XFontStyle.Regular);
+                XRect rect = new XRect(upperLeftCorner.X, upperLeftCorner.Y + 33, Settings.CustomTagSize, Settings.CustomTagSize / 2);
+                tf.Alignment = XParagraphAlignment.Center;
+                tf.DrawString(tag.Info.Model, font, XBrushes.Black, rect, XStringFormats.TopLeft);
+
+                // series name
+                XFont font2 = new XFont("Times New Roman", 3.5, XFontStyle.Bold);
+                XRect rect2 = new XRect(upperLeftCorner.X + 1, upperLeftCorner.Y + 15, Settings.CustomTagSize - 2, Settings.CustomTagSize / 2);
+                tf.Alignment = XParagraphAlignment.Center;
+                tf.DrawString(tag.Info.Series, font2, XBrushes.Black, rect2, XStringFormats.TopLeft);
+
+                // increase local offset for next tag
+                tagColumn++;
+            }
+
+            // save the document
+            String filename = Path.Combine(outputLocation, Settings.CustomTagCoverFilename);
+            document.Save(filename);
+
+            // start a viewer.
+            Process.Start(filename);
         }
     }
 }
