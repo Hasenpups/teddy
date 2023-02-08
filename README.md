@@ -9,13 +9,17 @@ New settings are available in teddyBench.cfg to adjust the cover creation:
 
   * CacheImageSize
       * Image resolution of cover images
-  * CustomTagCoverNonPrintableMargin 
+  * CustomTagNonPrintableMargin 
       * Margin that printers can not print on the page in mm
-  * CustomTagCoverOffsetIncrementX 
+  * CustomTagGapX
       * Horizontal space between two covers in mm
-  * CustomTagCoverOffsetIncrementY 
+  * CustomTagGapY 
       * Vertical space between two covers in mm
-  * CustomTagCoverSize
+  * CustomTagInitialColumn
+  * CustomTagInitialRow
+  * CustomTagSize
       * Size of covers in mm
   * CustomTagCoverFilename 
-      * Filename of export file
+      * Filename of export file for cover
+  * CustomTagBacksideFilename
+      * Filename of export file for backside
