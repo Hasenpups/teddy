@@ -50,6 +50,7 @@
             this.consoleModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createTagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createTagBacksideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -86,7 +87,6 @@
             this.exportTooggToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendDiagnosticsReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.createTagBacksideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.grpCardContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -111,7 +111,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(984, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -229,9 +229,16 @@
             // createTagToolStripMenuItem
             // 
             this.createTagToolStripMenuItem.Name = "createTagToolStripMenuItem";
-            this.createTagToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.createTagToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.createTagToolStripMenuItem.Text = "Create tag cover";
             this.createTagToolStripMenuItem.Click += new System.EventHandler(this.createCustomTagImageToolStripMenuItem_Click);
+            // 
+            // createTagBacksideToolStripMenuItem
+            // 
+            this.createTagBacksideToolStripMenuItem.Name = "createTagBacksideToolStripMenuItem";
+            this.createTagBacksideToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.createTagBacksideToolStripMenuItem.Text = "Create tag backside";
+            this.createTagBacksideToolStripMenuItem.Click += new System.EventHandler(this.createTagBacksideToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -312,7 +319,7 @@
             this.grpCardContent.Margin = new System.Windows.Forms.Padding(6);
             this.grpCardContent.Name = "grpCardContent";
             this.grpCardContent.Padding = new System.Windows.Forms.Padding(6);
-            this.grpCardContent.Size = new System.Drawing.Size(800, 426);
+            this.grpCardContent.Size = new System.Drawing.Size(984, 597);
             this.grpCardContent.TabIndex = 1;
             this.grpCardContent.TabStop = false;
             this.grpCardContent.Text = "Card Content";
@@ -335,8 +342,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.btnSave);
             this.splitContainer1.Panel2.Controls.Add(this.btnDelete);
             this.splitContainer1.Panel2.Controls.Add(this.btnAdd);
-            this.splitContainer1.Size = new System.Drawing.Size(788, 401);
-            this.splitContainer1.SplitterDistance = 687;
+            this.splitContainer1.Size = new System.Drawing.Size(972, 572);
+            this.splitContainer1.SplitterDistance = 865;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -360,7 +367,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.lstTonies);
-            this.splitContainer2.Size = new System.Drawing.Size(687, 401);
+            this.splitContainer2.Size = new System.Drawing.Size(865, 572);
             this.splitContainer2.SplitterDistance = 36;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 1;
@@ -442,7 +449,7 @@
             this.lstTonies.Location = new System.Drawing.Point(0, 0);
             this.lstTonies.Name = "lstTonies";
             this.lstTonies.ShowItemToolTips = true;
-            this.lstTonies.Size = new System.Drawing.Size(687, 364);
+            this.lstTonies.Size = new System.Drawing.Size(865, 535);
             this.lstTonies.TabIndex = 0;
             this.lstTonies.TileSize = new System.Drawing.Size(64, 64);
             this.lstTonies.UseCompatibleStateImageBehavior = false;
@@ -521,7 +528,7 @@
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLog.Size = new System.Drawing.Size(800, 426);
+            this.txtLog.Size = new System.Drawing.Size(984, 597);
             this.txtLog.TabIndex = 1;
             this.txtLog.Visible = false;
             // 
@@ -601,18 +608,11 @@
             this.sendDiagnosticsReportToolStripMenuItem.Text = "Send diagnostics report";
             this.sendDiagnosticsReportToolStripMenuItem.Click += new System.EventHandler(this.sendDiagnosticsReportToolStripMenuItem_Click);
             // 
-            // createTagBacksideToolStripMenuItem
-            // 
-            this.createTagBacksideToolStripMenuItem.Name = "createTagBacksideToolStripMenuItem";
-            this.createTagBacksideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.createTagBacksideToolStripMenuItem.Text = "Create tag backside";
-            this.createTagBacksideToolStripMenuItem.Click += new System.EventHandler(this.createTagBacksideToolStripMenuItem_Click);
-            // 
             // TeddyMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(984, 621);
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.grpCardContent);

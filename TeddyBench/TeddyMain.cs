@@ -43,6 +43,7 @@ namespace TeddyBench
         private SafeThread UpdateCheckThread = null;
 
         private string CurrentDirectory = null;
+        private string InternalContentDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), "Content");
         private bool AutoOpenDrive = true;
         private Dictionary<ListViewTag, ListViewItem> RegisteredItems = new Dictionary<ListViewTag, ListViewItem>();
         private static TonieTools.TonieData[] TonieInfos;
@@ -233,6 +234,12 @@ namespace TeddyBench
             StatusBarTimer.Tick += (object sender, EventArgs e) => { UpdateStatusBar(); };
             StatusBarTimer.Interval = 500;
             StatusBarTimer.Start();
+
+            // open internal content dir if exists
+            if (System.IO.Directory.Exists(InternalContentDir))
+            {
+                OpenPath(InternalContentDir);
+            }
         }
 
         void SaveSettings()
