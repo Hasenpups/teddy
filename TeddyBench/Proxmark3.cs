@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace TeddyBench
 {
-    public class Proxmark3
+    public class Proxmark3 : RfidReaderBase
     {
         public class Pm3UsbCommand
         {
@@ -242,17 +242,6 @@ namespace TeddyBench
             Marshal.FreeHGlobal(i);
         }
 
-        [Flags]
-        public enum eDeviceInfo
-        {
-            None = 0,
-            BootromPresent = 1,
-            OsImagePresent = 2,
-            ModeBootrom = 4,
-            ModeOs = 8,
-            UnderstandStartFlash = 16
-        }
-
         public class FlashRequestContext
         {
             public bool Proceed;
@@ -260,12 +249,6 @@ namespace TeddyBench
             public string FlashFile;
         }
 
-        public string CurrentPort { get; private set; }
-        public SerialPort Port { get; private set; }
-        public event EventHandler<string> UidFound;
-        public event EventHandler<string> DeviceFound;
-        public event EventHandler<FlashRequestContext> FlashRequest;
-        public event EventHandler<bool> FlashResult;
         public string CurrentUidString = null;
         private SafeThread ScanThread = null;
         private bool ExitScanThread = false;
@@ -275,12 +258,8 @@ namespace TeddyBench
 
         private Dictionary<string, DateTime> PortsFailed = new Dictionary<string, DateTime>();
         private Dictionary<string, DateTime> PortsAppeared = new Dictionary<string, DateTime>();
-        public string HardwareType = "";
-        public bool UnlockSupported = false;
-        public float AntennaVoltage = 0.0f;
-        public bool Connected = false;
 
-        public eDeviceInfo DeviceInfo = eDeviceInfo.None;
+        
         private string Flashfile = "fullimage.elf";
 
         public Proxmark3()
@@ -289,7 +268,7 @@ namespace TeddyBench
         }
 
 
-        public void Start()
+        public override void Start()
         {
             StartThread();
         }
@@ -304,13 +283,13 @@ namespace TeddyBench
             }
         }
 
-        public void Stop()
+        public override void Stop()
         {
             StopThread();
 
             Close();
 
-            DeviceFound?.Invoke(this, null);
+            OnDeviceFound(null);
         }
 
         public void StopThread()
@@ -376,7 +355,7 @@ namespace TeddyBench
                                 if (CurrentUidString != null)
                                 {
                                     CurrentUidString = null;
-                                    UidFound?.Invoke(this, null);
+                                    OnUidFound(null);
                                 }
 
                                 Thread.Sleep(100);
@@ -454,8 +433,7 @@ namespace TeddyBench
                             CurrentUidString = uidString;
 
                             /* notify listeners about currently detected UID */
-                            UidFound?.Invoke(this, uidString);
-
+                            OnUidFound(uidString);
 
                             while (GetRandom(uid) != null)
                             {
@@ -528,7 +506,7 @@ namespace TeddyBench
                     CurrentPort = null;
                 }
                 Connected = false;
-                DeviceFound?.Invoke(this, CurrentPort);
+                OnDeviceFound(CurrentPort);
             }
         }
 
@@ -981,12 +959,12 @@ namespace TeddyBench
                         ctx.FlashFile = Flashfile;
                         ctx.Proceed = false;
 
-                        FlashRequest?.Invoke(this, ctx);
+                        OnFlashRequest(ctx);
 
                         if (ctx.Proceed)
                         {
                             bool success = Flash(segs, bootloader);
-                            FlashResult?.Invoke(this, success);
+                            OnFlashResult(success);
                         }
                     }
 
@@ -1056,7 +1034,7 @@ namespace TeddyBench
                 UnlockSupported = reason > 0;
                 LogWindow.Log(LogWindow.eLogLevel.Debug, "[PM3] Device does " + (UnlockSupported ? "" : "*NOT*") + " support SLIX-L unlock command");
 
-                DeviceFound?.Invoke(this, CurrentPort);
+                OnDeviceFound(CurrentPort);
                 LogWindow.Log(LogWindow.eLogLevel.Debug, "[PM3] TryOpen: " + port + " successfully opened");
 
                 Connected = true;
@@ -1118,7 +1096,7 @@ namespace TeddyBench
             }
         }
 
-        public void EnterBootloader(string fileName)
+        public override void EnterBootloader(string fileName)
         {
             if((DeviceInfo & eDeviceInfo.BootromPresent) == 0)
             {
@@ -1295,7 +1273,7 @@ namespace TeddyBench
             return data;
         }
 
-        internal byte[] ReadMemory()
+        internal override byte[] ReadMemory()
         {
             if (Port == null)
             {
@@ -1322,7 +1300,7 @@ namespace TeddyBench
             return ret;
         }
 
-        internal void EmulateTag(byte[] data)
+        internal override void EmulateTag(byte[] data)
         {
             if (Port == null)
             {
@@ -1360,7 +1338,7 @@ namespace TeddyBench
             return AntennaVoltage;
         }
 
-        internal void EnterConsole()
+        internal override void EnterConsole()
         {
             if (Port == null)
             {
@@ -1420,7 +1398,7 @@ namespace TeddyBench
 
         }
 
-        internal void ExitConsole()
+        internal override void ExitConsole()
         {
             ExitConsoleThread = true;
 
