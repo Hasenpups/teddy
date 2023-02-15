@@ -248,17 +248,6 @@ namespace TeddyBench
             public bool Bootloader;
             public string FlashFile;
         }
-
-        public string CurrentUidString = null;
-        private SafeThread ScanThread = null;
-        private bool ExitScanThread = false;
-        private SafeThread ConsoleThread = null;
-        private bool ExitConsoleThread = false;
-        private object ReaderLock = new object();
-
-        private Dictionary<string, DateTime> PortsFailed = new Dictionary<string, DateTime>();
-        private Dictionary<string, DateTime> PortsAppeared = new Dictionary<string, DateTime>();
-
         
         private string Flashfile = "fullimage.elf";
 
@@ -267,48 +256,7 @@ namespace TeddyBench
             LogWindow.Log(LogWindow.eLogLevel.Debug, "[PM3] new instance");
         }
 
-
-        public override void Start()
-        {
-            StartThread();
-        }
-
-        private void StartThread()
-        {
-            if (ScanThread == null)
-            {
-                ExitScanThread = false;
-                ScanThread = new SafeThread(ScanThreadFunc, "PM3 Scan Thread");
-                ScanThread.Start();
-            }
-        }
-
-        public override void Stop()
-        {
-            StopThread();
-
-            Close();
-
-            OnDeviceFound(null);
-        }
-
-        public void StopThread()
-        {
-            if (ScanThread != null)
-            {
-                LogWindow.Log(LogWindow.eLogLevel.Debug, "[PM3] Trying to stop thread");
-                ExitScanThread = true;
-
-                if (!ScanThread.Join(1000))
-                {
-                    LogWindow.Log(LogWindow.eLogLevel.Debug, "[PM3] Trying to abort thread");
-                    ScanThread.Abort();
-                }
-                ScanThread = null;
-            }
-        }
-
-        private void ScanThreadFunc()
+        internal override void ScanThreadFunc()
         {
             lock (ReaderLock)
             {
@@ -478,36 +426,6 @@ namespace TeddyBench
             MeasurementResult result = new MeasurementResult();
             MeasureAntennaInternal(result, eMeasurementType.HFAntenna);
             AntennaVoltage = result.vHF;
-        }
-
-        private void Close()
-        {
-            lock (this)
-            {
-                if (Port != null)
-                {
-                    try
-                    {
-                        Flush(Port);
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-
-                    try
-                    {
-                        Port.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                    Port.Dispose();
-                    Port = null;
-                    CurrentPort = null;
-                }
-                Connected = false;
-                OnDeviceFound(CurrentPort);
-            }
         }
 
         private bool UnlockTag(uint pass)
@@ -823,18 +741,6 @@ namespace TeddyBench
                         LogWindow.Log(LogWindow.eLogLevel.Debug, "[PM3] MeasureAntenna: Unhandled: " + response.Cmd);
                         break;
                 }
-            }
-        }
-
-        private void Flush(SerialPort p)
-        {
-            if (p.BytesToRead > 0)
-            {
-                LogWindow.Log(LogWindow.eLogLevel.Debug, "[PM3] Flush: " + p.BytesToRead + " bytes to flush");
-            }
-            while (p.BytesToRead > 0)
-            {
-                p.ReadByte();
             }
         }
 

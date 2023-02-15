@@ -2,68 +2,19 @@
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace TeddyBench
 {
     public class Pn5180Esp : RfidReaderBase
     {
-        public string CurrentUidString = null;
-        private SafeThread ScanThread = null;
-        private bool ExitScanThread = false;
-        private SafeThread ConsoleThread = null;
-        private object ReaderLock = new object();
-
-        private Dictionary<string, DateTime> PortsFailed = new Dictionary<string, DateTime>();
-        private Dictionary<string, DateTime> PortsAppeared = new Dictionary<string, DateTime>();
-
         public Pn5180Esp()
         {
             LogWindow.Log(LogWindow.eLogLevel.Debug, "[Pn5180Esp] new instance");
         }
 
-
-        public override void Start()
-        {
-            StartThread();
-        }
-
-        private void StartThread()
-        {
-            if (ScanThread == null)
-            {
-                ExitScanThread = false;
-                ScanThread = new SafeThread(ScanThreadFunc, "Pn5180Esp Scan Thread");
-                ScanThread.Start();
-            }
-        }
-
-        public override void Stop()
-        {
-            StopThread();
-
-            Close();
-
-            OnDeviceFound(null);
-        }
-
-        public void StopThread()
-        {
-            if (ScanThread != null)
-            {
-                LogWindow.Log(LogWindow.eLogLevel.Debug, "[Pn5180Esp] Trying to stop thread");
-                ExitScanThread = true;
-
-                if (!ScanThread.Join(1000))
-                {
-                    LogWindow.Log(LogWindow.eLogLevel.Debug, "[Pn5180Esp] Trying to abort thread");
-                    ScanThread.Abort();
-                }
-                ScanThread = null;
-            }
-        }
-
-        private void ScanThreadFunc()
+        internal override void ScanThreadFunc()
         {
             lock (ReaderLock)
             {
@@ -187,36 +138,6 @@ namespace TeddyBench
             }
         }
 
-        private void Close()
-        {
-            lock (this)
-            {
-                if (Port != null)
-                {
-                    try
-                    {
-                        Flush(Port);
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-
-                    try
-                    {
-                        Port.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                    Port.Dispose();
-                    Port = null;
-                    CurrentPort = null;
-                }
-                Connected = false;
-                OnDeviceFound(CurrentPort);
-            }
-        }
-
         private bool UnlockTag(uint pass)
         {
             int reason = 0;
@@ -267,18 +188,6 @@ namespace TeddyBench
         }
 
         #endregion
-
-        private void Flush(SerialPort p)
-        {
-            if (p.BytesToRead > 0)
-            {
-                LogWindow.Log(LogWindow.eLogLevel.Debug, "[Pn5180Esp] Flush: " + p.BytesToRead + " bytes to flush");
-            }
-            while (p.BytesToRead > 0)
-            {
-                p.ReadByte();
-            }
-        }
 
         public bool Detect()
         {
