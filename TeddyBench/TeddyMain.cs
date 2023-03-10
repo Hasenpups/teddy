@@ -138,20 +138,24 @@ namespace TeddyBench
             }
         }
 
-        public static void LoadJson()
+        private void LoadJson()
         {
             try
             {
-                try
+                if (Settings.updateToniesJson == true || !System.IO.File.Exists("tonies.json"))
                 {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://gt-blog.de/JSON/tonies.json?source=TeddyBench&version=" + ThisAssembly.Git.BaseTag);
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                    TextReader reader = new StreamReader(response.GetResponseStream());
-                    string content = reader.ReadToEnd();
-                    File.WriteAllText("tonies.json", content);
-                }
-                catch (Exception e)
-                {
+                    try
+                    {
+                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://gt-blog.de/JSON/tonies.json?source=TeddyBench&version=" + ThisAssembly.Git.BaseTag);
+                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                        TextReader reader = new StreamReader(response.GetResponseStream());
+                        string content = reader.ReadToEnd();
+                        File.WriteAllText("tonies.json", content);
+                 
+                    }
+                    catch (Exception e)
+                    {
+                    }
                 }
 
                 try

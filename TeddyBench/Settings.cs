@@ -16,6 +16,8 @@ namespace TeddyBench
         public bool DebugWindow = false;
         public int CacheImageSize = 256;
 
+        public bool updateToniesJson = true;
+
         public int CustomTagNonPrintableMargin = 15;
         public int CustomTagGapX = 5;
         public int CustomTagGapY = 5;
