@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Unknown", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Custom", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Retail", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Unknown", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Custom", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Retail", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("", System.Windows.Forms.HorizontalAlignment.Left);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TeddyMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,6 +82,7 @@
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assignNewUIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assignRandomUID = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportTooggToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -343,7 +344,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.btnDelete);
             this.splitContainer1.Panel2.Controls.Add(this.btnAdd);
             this.splitContainer1.Size = new System.Drawing.Size(972, 572);
-            this.splitContainer1.SplitterDistance = 865;
+            this.splitContainer1.SplitterDistance = 871;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -367,7 +368,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.lstTonies);
-            this.splitContainer2.Size = new System.Drawing.Size(865, 572);
+            this.splitContainer2.Size = new System.Drawing.Size(871, 572);
             this.splitContainer2.SplitterDistance = 36;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 1;
@@ -430,26 +431,26 @@
             this.lstTonies.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
             this.lstTonies.Dock = System.Windows.Forms.DockStyle.Fill;
-            listViewGroup1.Header = "Unknown";
-            listViewGroup1.Name = "Unknown";
-            listViewGroup2.Header = "Custom";
-            listViewGroup2.Name = "Custom";
-            listViewGroup3.Header = "Retail";
-            listViewGroup3.Name = "Retail";
-            listViewGroup4.Header = "";
-            listViewGroup4.Name = "listViewGroup1";
+            listViewGroup5.Header = "Unknown";
+            listViewGroup5.Name = "Unknown";
+            listViewGroup6.Header = "Custom";
+            listViewGroup6.Name = "Custom";
+            listViewGroup7.Header = "Retail";
+            listViewGroup7.Name = "Retail";
+            listViewGroup8.Header = "";
+            listViewGroup8.Name = "listViewGroup1";
             this.lstTonies.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup5,
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8});
             this.lstTonies.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lstTonies.HideSelection = false;
             this.lstTonies.LabelEdit = true;
             this.lstTonies.Location = new System.Drawing.Point(0, 0);
             this.lstTonies.Name = "lstTonies";
             this.lstTonies.ShowItemToolTips = true;
-            this.lstTonies.Size = new System.Drawing.Size(865, 535);
+            this.lstTonies.Size = new System.Drawing.Size(871, 535);
             this.lstTonies.TabIndex = 0;
             this.lstTonies.TileSize = new System.Drawing.Size(64, 64);
             this.lstTonies.UseCompatibleStateImageBehavior = false;
@@ -539,13 +540,14 @@
             this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.assignNewUIDToolStripMenuItem,
+            this.assignRandomUID,
             this.toolStripMenuItem2,
             this.showInExplorerToolStripMenuItem,
             this.exportTooggToolStripMenuItem,
             this.exportToToolStripMenuItem,
             this.sendDiagnosticsReportToolStripMenuItem});
             this.TonieContextMenu.Name = "contextMenuStrip1";
-            this.TonieContextMenu.Size = new System.Drawing.Size(199, 186);
+            this.TonieContextMenu.Size = new System.Drawing.Size(199, 230);
             // 
             // toggleLiveFlagToolStripMenuItem
             // 
@@ -574,6 +576,13 @@
             this.assignNewUIDToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.assignNewUIDToolStripMenuItem.Text = "Assign new UID";
             this.assignNewUIDToolStripMenuItem.Click += new System.EventHandler(this.assignNewUIDToolStripMenuItem_Click);
+            // 
+            // assignRandomUID
+            // 
+            this.assignRandomUID.Name = "assignRandomUID";
+            this.assignRandomUID.Size = new System.Drawing.Size(198, 22);
+            this.assignRandomUID.Text = "Assign random UID";
+            this.assignRandomUID.Click += new System.EventHandler(this.assignDummyUID_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -698,6 +707,7 @@
         private System.Windows.Forms.ToolStripMenuItem tagsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createTagToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createTagBacksideToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem assignRandomUID;
     }
 }
 

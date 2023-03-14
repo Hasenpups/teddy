@@ -151,7 +151,7 @@ namespace TeddyBench
                         TextReader reader = new StreamReader(response.GetResponseStream());
                         string content = reader.ReadToEnd();
                         File.WriteAllText("tonies.json", content);
-                 
+
                     }
                     catch (Exception e)
                     {
@@ -171,7 +171,7 @@ namespace TeddyBench
                 {
                     CustomTonies = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("customTonies.json"));
                 }
-                catch(FileNotFoundException e)
+                catch (FileNotFoundException e)
                 {
                     CustomTonies = new Dictionary<string, string>();
                 }
@@ -510,13 +510,13 @@ namespace TeddyBench
 
         private uint GetAudioID()
         {
-            if(MessageBox.Show("Do you want to set a specific Audio-ID? If you don't know, just say 'No'.", "Set specific Audio ID", MessageBoxButtons.YesNo) == DialogResult.No)
+            if (MessageBox.Show("Do you want to set a specific Audio-ID? If you don't know, just say 'No'.", "Set specific Audio ID", MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 return uint.MaxValue;
             }
 
             AskHexForm form = new AskHexForm();
-            if(form.ShowDialog() != DialogResult.OK)
+            if (form.ShowDialog() != DialogResult.OK)
             {
                 return uint.MaxValue;
             }
@@ -758,7 +758,7 @@ namespace TeddyBench
                     }
 
                     /* scan local directory */
-                    foreach(var file in new DirectoryInfo(CurrentDirectory).GetFiles())
+                    foreach (var file in new DirectoryInfo(CurrentDirectory).GetFiles())
                     {
                         Regex reg = new Regex("(?<prod>[0-9]{8}|[0-9]{2}-[0-9]{4}) - [0-9A-F]{8} - (?<name>.*)");
                         var match = reg.Match(file.Name);
@@ -800,7 +800,7 @@ namespace TeddyBench
             if (AnalyzeThread != null)
             {
                 AnalyzeThreadStop = true;
-                if(!AnalyzeThread.Join(2000))
+                if (!AnalyzeThread.Join(2000))
                 {
                     LogWindow.Log(LogWindow.eLogLevel.Error, "Failed to stop Analyze Thread");
                 }
@@ -902,7 +902,7 @@ namespace TeddyBench
                                 LogWindow.Log(LogWindow.eLogLevel.DebugVerbose, "     AudioId: " + tag.AudioId);
 
                                 bool live = tag.FileInfo.Attributes.HasFlag(FileAttributes.Hidden);
-                                string newText = (live ? "[live] " : "") +  tonieName;
+                                string newText = (live ? "[live] " : "") + tonieName;
                                 string newImakeKey = image;
                                 string newToolTipText =
                                     "File:     " + tag.FileName + Environment.NewLine +
@@ -965,7 +965,7 @@ namespace TeddyBench
 
                 Image img;
 
-                
+
                 Image originalImage = Image.FromStream(response.GetResponseStream());
 
                 if (originalImage.Height > originalImage.Width)
@@ -977,8 +977,8 @@ namespace TeddyBench
                     originalImage = CropCenterOfImage(originalImage, new Size(originalImage.Height, originalImage.Height));
                 }
 
-                img = ResizeImage(originalImage, Settings.CacheImageSize, Settings.CacheImageSize);  
-                
+                img = ResizeImage(originalImage, Settings.CacheImageSize, Settings.CacheImageSize);
+
                 try
                 {
                     img.Save(cacheFileName);
@@ -1020,7 +1020,7 @@ namespace TeddyBench
             int dstWidth = width;
             int dstHeight = (int)(dstWidth / srcRatio);
 
-            if(dstHeight > image.Height)
+            if (dstHeight > image.Height)
             {
                 dstHeight = height;
                 dstWidth = (int)(dstHeight * srcRatio);
@@ -1472,6 +1472,71 @@ namespace TeddyBench
             }
         }
 
+        private void assignDummyUID_Click(object sender, EventArgs e)
+        {
+            if (lstTonies.SelectedItems.Count == 1)
+            {
+                ListViewItem item = lstTonies.SelectedItems[0];
+
+                ListViewTag tag = item.Tag as ListViewTag;
+                var fi = new FileInfo(tag.FileName);
+                string oldUid = ReverseUid(fi.Directory.Name + fi.Name);
+
+                // generate random UID
+                Guid myuuid = Guid.NewGuid();
+                string myuuidAsString = myuuid.ToString();
+                myuuidAsString = myuuidAsString.Replace("-", string.Empty);
+                myuuidAsString = myuuidAsString.Substring(0, 10);
+                myuuidAsString = "E00403" + myuuidAsString.ToUpper();
+
+                string uid = myuuidAsString;
+                string newDir = Path.Combine(CurrentDirectory, ReverseUid(uid).Substring(0, 8));
+                string newFile = Path.Combine(newDir, ReverseUid(uid).Substring(8, 8));
+
+                if (new FileInfo(newFile).FullName == fi.FullName)
+                {
+                    return;
+                }
+
+                if (new FileInfo(newFile).Exists)
+                {
+                    MessageBox.Show("Failed to assign UID '" + uid + "' as this file already exists", "Re-assigning UID failed");
+                    return;
+                }
+
+                try
+                {
+                    Directory.CreateDirectory(newDir);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to create directory '" + newDir + "'", "Re-assigning UID failed");
+                    return;
+                }
+
+                try
+                {
+                    DirectoryInfo oldDir = fi.Directory;
+                    fi.MoveTo(newFile);
+                    if (oldDir.EnumerateFiles().Count() != 0 || (oldDir.EnumerateDirectories().Count() != 0))
+                    {
+                        MessageBox.Show("Success. Will not delete directory '" + oldDir.FullName + "' as it is not empty.", "Successfully re-assigned UID");
+                    }
+                    else
+                    {
+                        oldDir.Delete();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to write file '" + newFile + "'", "Re-assigning UID failed");
+                    return;
+                }
+
+                RefreshCardContent();
+            }
+        }
+
         private void DeleteSelected()
         {
             bool deleteAll = false;
@@ -1726,7 +1791,7 @@ namespace TeddyBench
             {
                 ListViewTag tag = t.Tag as ListViewTag;
 
-                if(bUnhideAll || tag.FileInfo.Attributes.HasFlag(FileAttributes.Hidden))
+                if (bUnhideAll || tag.FileInfo.Attributes.HasFlag(FileAttributes.Hidden))
                 {
                     tag.FileInfo.Attributes &= ~FileAttributes.Hidden;
                 }
@@ -1911,7 +1976,7 @@ namespace TeddyBench
             }
 
             string content = " Reporting Proxmark3 antenna performance" + Environment.NewLine;
-            content +=       "------------------------------------------" + Environment.NewLine;
+            content += "------------------------------------------" + Environment.NewLine;
 
             content += "HF:     " + result.vHF.ToString("0.00", CultureInfo.InvariantCulture) + " V" + Environment.NewLine;
             content += "LF125:  " + result.vLF125.ToString("0.00", CultureInfo.InvariantCulture) + " V" + Environment.NewLine;
@@ -2056,7 +2121,7 @@ namespace TeddyBench
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Failed to parse '" + previous + "'."+Environment.NewLine+ "The hex code must represent 40 byte in hexadecimal numbers:" + Environment.NewLine + "8 byte UUID and 32 byte data.");
+                        MessageBox.Show("Failed to parse '" + previous + "'." + Environment.NewLine + "The hex code must represent 40 byte in hexadecimal numbers:" + Environment.NewLine + "8 byte UUID and 32 byte data.");
                         continue;
                     }
 
