@@ -29,4 +29,4 @@ New settings are available in teddyBench.cfg to adjust the cover creation:
 
 # Additional implementations
  * assign random UID
- * option to disable update of tonies.json
+ * option to disable update of tonies.json ("updateToniesJson": false in TeddyBench.cfg)
