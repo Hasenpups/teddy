@@ -26,3 +26,7 @@ New settings are available in teddyBench.cfg to adjust the cover creation:
 
 # Implementation of PN5180 ESP Reader
  * Set "NfcType": "Pn5180Esp" in TeddyBench.cfg
+
+# Additional implementations
+ * assign random UID
+ * option to disable update of tonies.json
