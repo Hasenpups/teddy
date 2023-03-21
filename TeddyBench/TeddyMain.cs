@@ -1298,6 +1298,11 @@ namespace TeddyBench
             SaveSelected();
         }
 
+        private void exportToMp3ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveSelected(true);
+        }
+
         private void exportToToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExportSelected();
@@ -1585,7 +1590,7 @@ namespace TeddyBench
             StartAnalyzeThread();
         }
 
-        private void SaveSelected()
+        private void SaveSelected(bool saveAsMp3 = false)
         {
             bool saveAll = true;
             bool createDirs = false;
@@ -1660,7 +1665,7 @@ namespace TeddyBench
                             }
                             else
                             {
-                                outDirectory = Path.Combine(outDirectory, info.Model + " - " + dump.Header.AudioId.ToString("X8") + " - " + RemoveInvalidChars(info.Title).Trim());
+                                outDirectory = Path.Combine(outDirectory, RemoveInvalidChars(info.Title).Trim());
                             }
                             if (!Directory.Exists(outDirectory))
                             {
@@ -1676,20 +1681,49 @@ namespace TeddyBench
 
                         try
                         {
-                            dump.DumpAudioFiles(outDirectory, inFile + "-" + dump.Header.AudioId.ToString("X8"), false, tags.ToArray(), titles);
+                            dump.DumpAudioFiles(outDirectory, "", false, tags.ToArray(), titles);
                         }
                         catch (Exception ex)
                         {
                             Console.WriteLine("[ERROR] Failed to write .ogg/.cue'");
                             Console.WriteLine("   Message:    " + ex.Message);
                         }
+
+                        // now try to convert all ogg files to MP3
+                        if (saveAsMp3)
+                        {
+                            // list all ogg files in out directory
+                            string[] fileEntries = Directory.GetFiles(outDirectory, "*.ogg");
+                            // loop over all files
+                            foreach (string fileName in fileEntries)
+                            {
+                                String destinationFileName = outDirectory + "\\" + Path.GetFileNameWithoutExtension(fileName) + ".mp3";
+                                if(!System.IO.File.Exists(destinationFileName))
+                                { 
+                                    // do the conversion
+                                    if (info != null)
+                                    { 
+                                        Execute("Resources/ffmpeg.exe", "-i \"" + fileName + "\" -metadata artist=\"" + info.Series + "\" -metadata album=\"" + info.Episodes + "\" \"" + destinationFileName + "\"");
+                                    }
+                                    else
+                                    {
+                                        Execute("Resources/ffmpeg.exe", "-i \"" + fileName + "\" \"" + destinationFileName + "\"");
+                                    }
+                                }
+                                // delete ogg file
+                                System.IO.File.Delete(fileName);
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show("Failed to save file '" + tag.FileName + "'");
-                        return;
                     }
+
+                    Console.WriteLine("Export finished: ");
                 }
+
+                MessageBox.Show("Export finished.", "", MessageBoxButtons.OK);
             }
         }
 
@@ -1720,6 +1754,26 @@ namespace TeddyBench
                     return;
                 }
             }
+        }
+
+        private static string Execute(string exePath, string parameters)
+        {
+            string result = String.Empty;
+
+            using (Process p = new Process())
+            {
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.FileName = exePath;
+                p.StartInfo.Arguments = parameters;
+                p.Start();
+                p.WaitForExit();
+
+                result = p.StandardOutput.ReadToEnd();
+            }
+
+            return result;
         }
 
         #endregion
