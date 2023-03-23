@@ -1308,6 +1308,66 @@ namespace TeddyBench
             ExportSelected();
         }
 
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+
+            if (dlg.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            string outputLocation = dlg.SelectedPath;
+
+            foreach (ListViewItem item in lstTonies.SelectedItems)
+            {
+                ListViewTag tag = item.Tag as ListViewTag;
+
+                try
+                {
+                    string destName = Path.Combine(outputLocation, Path.GetFileName(Path.GetDirectoryName(tag.FileName)));
+                    CopyDirectory(Path.GetDirectoryName(tag.FileName), destName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to copy directory '" + tag.FileName + "': " + ex.Message);
+                    return;
+                }
+            }
+
+            MessageBox.Show("Finished");
+        }
+
+        public static void CopyDirectory(string sourceDirectory, string targetDirectory)
+        {
+            var diSource = new DirectoryInfo(sourceDirectory);
+            var diTarget = new DirectoryInfo(targetDirectory);
+
+            CopyAll(diSource, diTarget);
+        }
+
+        public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+        {
+            Directory.CreateDirectory(target.FullName);
+
+            // Copy each file into the new directory.
+            foreach (FileInfo fi in source.GetFiles())
+            {
+                // do not copy if file already exists
+                if (!System.IO.File.Exists(Path.Combine(target.FullName, fi.Name)))
+                { 
+                    fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+                }
+            }
+
+            // Copy each subdirectory using recursion.
+            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+            {
+                DirectoryInfo nextTargetSubDir =
+                    target.CreateSubdirectory(diSourceSubDir.Name);
+                CopyAll(diSourceSubDir, nextTargetSubDir);
+            }
+        }
+
         private void assignNewUIDToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReassignSelected();
